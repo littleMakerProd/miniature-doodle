@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('15 8 * * *', 'cinemas.cron.my_scheduled_job')
+    ('42 8 * * *', 'cinemas.cron.get_movies_playing_now')
 ]
 
 MIDDLEWARE = [
