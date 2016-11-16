@@ -20,7 +20,7 @@ NO_CLASS = "NO CLASS"
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('cron', day_of_week='mon-sun', hour=23, minutes=35)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=23, minutes=50)
 def get_movies_playing_now():
     print("MILKENTTTTTTTTT")
     global url_movies_playing_now
