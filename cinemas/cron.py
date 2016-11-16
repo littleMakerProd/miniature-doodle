@@ -1,6 +1,6 @@
 from cinemas.models import Movie
 from django.utils import timezone
-
+from apscheduler.schedulers.blocking import BlockingScheduler
 import requests
 import bs4
 
@@ -18,7 +18,9 @@ XXI = "XXI"
 PREMIERE = "PREMIERE"
 NO_CLASS = "NO CLASS"
 
+sched = BlockingScheduler()
 
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=23, minutes=10)
 def get_movies_playing_now():
     global url_movies_playing_now
     Movie.objects.all().delete()
@@ -51,6 +53,9 @@ def get_movies_playing_now():
                 href = p['href']
         url_movies_playing_now = href
 
+
+
+sched.start()
 def get_movie_class(group):
 	if IMAX in str(group.findAll('a')):
 		return IMAX

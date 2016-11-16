@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'cinemas.apps.CinemasConfig',
-    'django_crontab',
+#    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,9 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-CRONJOBS = [
-    ('45 7 * * *', 'cinemas.cron.get_movies_playing_now')
-]
+#CRONJOBS = [
+#    ('45 7 * * *', 'cinemas.cron.get_movies_playing_now')
+#]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
