@@ -21,6 +21,7 @@ NO_CLASS = "NO CLASS"
 
 def get_movies_playing_now():
     global url_movies_playing_now
+    Movie.objects.all().delete()
     while(url_movies_playing_now):
         title = []
         description = []
