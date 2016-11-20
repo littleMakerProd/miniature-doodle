@@ -118,10 +118,10 @@ def find_jakarta_cinema(cinema_details, cinema_names, website_links, address):
 
 				if content.name == "span" and content.string.upper() == LOCATION_JAKARTA:
 					cinema_name = normalize(content.previous_sibling.previous_sibling.string)
-                    if is_not_duplicate_cinemas(cinema_name):
+					if is_not_duplicate_cinemas(cinema_name):
 						cinema_names.append(cinema_name)
 						website_links.append(web)
-                        address.append(cinema_address)
+						address.append(cinema_address)
 					return
 
 				if content.name == "span" and content.string.upper() != LOCATION_JAKARTA:
@@ -146,11 +146,11 @@ def find_showtime_in_jakarta_cinemas():
 	#Find cinemas with light colored labels (due to UI))
 	for cinema_light in soup.find('table', class_='table-theater').find_all('tr',class_="light"):
 		find_jakarta_cinema(cinema_light, names, websites, address)
-    #Find cinemas with dark colored labels (due to UI)
+	#Find cinemas with dark colored labels (due to UI)
 	for cinema_dark in soup.find('table', class_='table-theater').find_all('tr',class_="dark"):
 		find_jakarta_cinema(cinema_dark, names, websites, address)
 
-    #Get showtimes for each cinemas
+	#Get showtimes for each cinemas
 	for link, cinema_name, each_address in zip(websites, names, each_address):
 		movies_showtimes = get_showtimes(link)
 		c = Cinema(cinema_name= cinema_name, cinema_address=each_address)
