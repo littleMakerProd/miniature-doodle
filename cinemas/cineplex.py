@@ -1,15 +1,16 @@
-from cinemas.models import Movie
+from cinemas.models import Movie, Cinema, Screening
 from django.utils import timezone
+from datetime import datetime
 import requests
 import bs4
 
 headers = {
-    'Referer': '',
+    'Referer': 'https://google.com',
 }
 
 LOCATION_JAKARTA = "JAKARTA"
 url_movies_playing_now = 'http://www.21cineplex.com/nowplaying'
-url_cinemas_info = 'http://www.21cineplex.com/cinemas'
+url_cinemas_info = 'http://www.21cineplex.com/theaters'
 cinemaS = {}
 
 IMAX = "IMAX"
@@ -19,7 +20,7 @@ NO_CLASS = "NO CLASS"
 
 
 def get_movies_playing_now():
-    print("MILKENTTTTTTTTT")
+
     global url_movies_playing_now
     Movie.objects.all().delete()
     while(url_movies_playing_now):
@@ -56,9 +57,9 @@ def get_movie_class(group):
 	if IMAX in str(group.findAll('a')):
 		return IMAX
 	elif XXI in str(group.findAll('a')):
-		return IMAX
+		return XXI
 	elif PREMIERE in str(group.findAll('a')):
-		return IMAX
+		return PREMIERE
 	else:
 		return ""
 
@@ -102,7 +103,7 @@ def is_not_duplicate_cinemas(name):
 	else:
 		return False
 
-def find_jakarta_cinema(cinema_details, cinema_names, website_links):
+def find_jakarta_cinema(cinema_details, cinema_names, website_links, address):
 	cinema_details_list = cinema_details.contents
 	try:
 		if len(cinema_details_list) == 2:
@@ -113,12 +114,14 @@ def find_jakarta_cinema(cinema_details, cinema_names, website_links):
 
 				if content.name == 'a' and 'href'in content.attrs:
 					web = content.attrs['href']
+					cinema_address = " ".join(content.attrs['rel']).replace("</div>", " ").replace("<div>", " ")
 
 				if content.name == "span" and content.string.upper() == LOCATION_JAKARTA:
 					cinema_name = normalize(content.previous_sibling.previous_sibling.string)
-					if is_not_duplicate_cinemas(cinema_name):
+                    if is_not_duplicate_cinemas(cinema_name):
 						cinema_names.append(cinema_name)
 						website_links.append(web)
+                        address.append(cinema_address)
 					return
 
 				if content.name == "span" and content.string.upper() != LOCATION_JAKARTA:
@@ -139,25 +142,22 @@ def find_showtime_in_jakarta_cinemas():
 	s = requests.get(url_cinemas_info, headers=headers)
 	soup = bs4.BeautifulSoup(s.text, "html.parser")
 
-	names, websites = [], []
+	names, websites, address = [], [], []
 	#Find cinemas with light colored labels (due to UI))
-	for cinema_light in soup.find('table', class_='table-cinema').find_all('tr',class_="light"):
-		find_jakarta_cinema(cinema_light, names, websites)
+	for cinema_light in soup.find('table', class_='table-theater').find_all('tr',class_="light"):
+		find_jakarta_cinema(cinema_light, names, websites, address)
     #Find cinemas with dark colored labels (due to UI)
-	for cinema_dark in soup.find('table', class_='table-cinema').find_all('tr',class_="dark"):
-		find_jakarta_cinema(cinema_dark, names, websites)
+	for cinema_dark in soup.find('table', class_='table-theater').find_all('tr',class_="dark"):
+		find_jakarta_cinema(cinema_dark, names, websites, address)
 
     #Get showtimes for each cinemas
-	for link, cinema_name in zip(websites,names):
+	for link, cinema_name, each_address in zip(websites, names, each_address):
 		movies_showtimes = get_showtimes(link)
-		print("Movies playing for " +  cinema_name + " :")
+		c = Cinema(cinema_name= cinema_name, cinema_address=each_address)
+		c.save()
 		for movie_showtime in movies_showtimes:
-			print("Title: " + movie_showtime[0])
+			m = Movie(movie_title= movie_showtime[0], movie_type=movie_showtime[2],cinema= c)
+			m.save()
 			for time in movie_showtime[1]:
-				print(time + "   " + movie_showtime[2])
-
-def my_scheduled_job():
-    m = Movie(movie_title="movie " + str(timezone.now()))
-    m.save()
-
-
+				t = datetime.strptime(time, "%H:%M").time()
+				s = Screening(time= t, movie=m)
