@@ -139,6 +139,7 @@ def find_jakarta_cinema(cinema_details, cinema_names, website_links, address):
 
 def find_showtime_in_jakarta_cinemas():
 	#Create BeatifulSoup Object with url link
+	Cinema.objects.all().delete()
 	s = requests.get(url_cinemas_info, headers=headers)
 	soup = bs4.BeautifulSoup(s.text, "html.parser")
 
@@ -159,5 +160,6 @@ def find_showtime_in_jakarta_cinemas():
 			m = Movie(movie_title= movie_showtime[0], movie_type=movie_showtime[2],cinema= c)
 			m.save()
 			for time in movie_showtime[1]:
-				t = datetime.strptime(time, "%H:%M").time()
+				t = datetime.strptime(time, "%H:%M")
 				s = Screening(time= t, movie=m)
+				s.save()
