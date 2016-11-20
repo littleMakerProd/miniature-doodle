@@ -32,21 +32,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='movie',
             name='movie_type',
-            field=models.CharField(max_length=200),
+            field=models.CharField(max_length=200, default= 'test'),
+            preserve_default = False,
         ),
         migrations.AlterField(
             model_name='movie',
             name='movie_description',
-            field=models.CharField(max_length=200),
+            field=models.CharField(max_length=200, default = 'test'),
+            preserve_default = False,
         ),
         migrations.AddField(
             model_name='screening',
             name='movie',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cinemas.Movie'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cinemas.Movie', default = 1),
+            preserve_default= False,
         ),
         migrations.AddField(
             model_name='movie',
             name='cinema',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cinemas.Cinema'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cinemas.Cinema', default= 1),
+            preserve_default= False,
         ),
     ]
