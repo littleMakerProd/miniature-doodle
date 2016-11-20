@@ -6,10 +6,10 @@ sched = BlockingScheduler()
 
 class Command(BaseCommand):
     
-    @sched.scheduled_job('cron', day_of_week='mon-sun', hour=20, minute=34)
+    @sched.scheduled_job('cron', day_of_week='mon-sun', hour=7, minute=00)
     def scheduled_job():
         cinemas.cineplex.find_showtime_in_jakarta_cinemas()
-        print('This job is run every day at 6:12pm.')
+        print('FindShowTimeInJakarta is run every day at 7:00am.')
 
     def handle(self, *args, **options):
         sched.start()

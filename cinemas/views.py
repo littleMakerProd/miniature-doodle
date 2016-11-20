@@ -9,4 +9,4 @@ def index(request):
     return HttpResponse("You are at INDEX.") 
 
 def get_movies_today(request):
-    return HttpResponse(serializers.serialize('json',Movie.objects.all()), content_type="application/json")
+    return HttpResponse(serializers.serialize('json',Movie.objects.all().distinct('movie_title')), content_type="application/json")
