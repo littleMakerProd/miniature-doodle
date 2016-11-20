@@ -151,7 +151,7 @@ def find_showtime_in_jakarta_cinemas():
 		find_jakarta_cinema(cinema_dark, names, websites, address)
 
 	#Get showtimes for each cinemas
-	for link, cinema_name, each_address in zip(websites, names, each_address):
+	for link, cinema_name, each_address in zip(websites, names, address):
 		movies_showtimes = get_showtimes(link)
 		c = Cinema(cinema_name= cinema_name, cinema_address=each_address)
 		c.save()
