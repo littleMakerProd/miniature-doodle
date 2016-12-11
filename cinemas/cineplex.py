@@ -1,8 +1,7 @@
 from cinemas.models import Movie, Cinema, Screening
 from django.utils import timezone
 from datetime import datetime
-import requests
-import bs4
+import requests, bs4, logging
 
 headers = {
     'Referer': 'https://google.com',
@@ -18,6 +17,8 @@ XXI = "XXI"
 PREMIERE = "PREMIERE"
 NO_CLASS = "NO CLASS"
 
+
+logger = logging.getLogger(__name__)
 
 def get_movies_playing_now():
 
@@ -139,6 +140,7 @@ def find_jakarta_cinema(cinema_details, cinema_names, website_links, address):
 
 def find_showtime_in_jakarta_cinemas():
 	#Create BeatifulSoup Object with url link
+    logger.info("Empyting Cinema table...")
 	Cinema.objects.all().delete()
 	s = requests.get(url_cinemas_info, headers=headers)
 	soup = bs4.BeautifulSoup(s.text, "html.parser")
